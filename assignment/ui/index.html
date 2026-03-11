@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Items</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: #1a1a2e;
+      color: #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      background: #16213e;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+      padding: 2.5rem 3rem;
+      text-align: center;
+      max-width: 480px;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      color: #e0e0e0;
+      margin-bottom: 1.5rem;
+    }
+
+    ul {
+      list-style: none;
+      margin-bottom: 1.5rem;
+    }
+
+    li {
+      padding: 0.6rem 1rem;
+      margin-bottom: 0.4rem;
+      background: #0f3460;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      transition: background 0.2s;
+    }
+
+    li:hover { background: #533483; }
+
+    #error {
+      color: #e94560;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    .empty {
+      color: #718096;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Items</h1>
+    <ul id="items"></ul>
+    <div id="error"></div>
+  </div>
+
+  <script>
+    async function fetchItems() {
+      const listEl = document.getElementById('items');
+      const errEl = document.getElementById('error');
+
+      try {
+        const res = await fetch('http://localhost:8000/items');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+
+        if (data.length === 0) {
+          listEl.innerHTML = '<li class="empty">No items found</li>';
+          return;
+        }
+
+        listEl.innerHTML = data.map(item => `<li>${item.name}</li>`).join('');
+      } catch (err) {
+        errEl.textContent = `Error: ${err.message}`;
+        errEl.style.display = 'block';
+      }
+    }
+
+    fetchItems();
+  </script>
+</body>
+</html>
